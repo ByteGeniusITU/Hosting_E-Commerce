@@ -1,0 +1,9 @@
+package service;
+
+import model.Usuario;
+
+import java.util.List;
+
+public interface UsuarioService {
+    List<Usuario> getUsuarios();
+}
