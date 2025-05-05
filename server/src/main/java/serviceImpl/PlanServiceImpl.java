@@ -2,11 +2,13 @@ package serviceImpl;
 
 import model.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import repository.PlanRepository;
 import service.PlanService;
 
 import java.util.List;
 
+@Service
 public class PlanServiceImpl implements PlanService {
 
     @Autowired

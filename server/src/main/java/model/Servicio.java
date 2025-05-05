@@ -5,6 +5,7 @@ import enums.ServerStatus;
 import jakarta.persistence.*;
 
 @Entity
+@Table(name = "servicios")
 public class Servicio {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
