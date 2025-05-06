@@ -17,9 +17,11 @@ public class Plan {
     private Videojuego videojuego;
 
     @Basic
+    @Enumerated(EnumType.STRING)
     private PlanType tipo;
     private int cantidad;
     private int precio_hora;
+    @Enumerated(EnumType.STRING)
     private PlanStatus estado;
 
     @OneToMany(mappedBy = "planCpu")

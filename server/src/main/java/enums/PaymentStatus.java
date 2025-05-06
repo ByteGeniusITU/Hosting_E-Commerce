@@ -2,5 +2,6 @@ package enums;
 
 public enum PaymentStatus {
     PAGADO,
-    NO_PAGADO;
+    NO_PAGADO,
+    PENDIENTE;
 }

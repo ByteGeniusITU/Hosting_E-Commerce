@@ -1,5 +1,6 @@
 package serviceImpl;
 
+import enums.PlanType;
 import model.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,11 +22,11 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public List<Plan> getPlanesRam() {
-        return repository.findAllByPlanTypeRAM();
+        return repository.findAllByPlanType(PlanType.RAM);
     }
 
     @Override
     public List<Plan> getPlanesCpu() {
-        return repository.findAllByPlanTypeCPU();
+        return repository.findAllByPlanType(PlanType.CPU);
     }
 }

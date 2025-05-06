@@ -28,7 +28,9 @@ public class Servicio {
     private Plan planRam;
 
     @Basic
+    @Enumerated(EnumType.STRING)
     private PaymentStatus estadoPago;
+    @Enumerated(EnumType.STRING)
     private ServerStatus estadoServidor;
 
     public Servicio() {
