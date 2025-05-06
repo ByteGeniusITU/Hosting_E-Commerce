@@ -1,10 +1,10 @@
-package serviceImpl;
+package com.bytegenius.server.serviceImpl;
 
-import model.Usuario;
+import com.bytegenius.server.model.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.UsuarioRepository;
-import service.UsuarioService;
+import com.bytegenius.server.repository.UsuarioRepository;
+import com.bytegenius.server.service.UsuarioService;
 
 import java.util.List;
 

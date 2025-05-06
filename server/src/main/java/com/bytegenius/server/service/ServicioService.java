@@ -1,6 +1,6 @@
-package service;
+package com.bytegenius.server.service;
 
-import model.Servicio;
+import com.bytegenius.server.model.Servicio;
 
 import java.util.List;
 

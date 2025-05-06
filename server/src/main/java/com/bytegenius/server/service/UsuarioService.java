@@ -1,6 +1,6 @@
-package service;
+package com.bytegenius.server.service;
 
-import model.Usuario;
+import com.bytegenius.server.model.Usuario;
 
 import java.util.List;
 

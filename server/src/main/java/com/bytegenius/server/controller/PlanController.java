@@ -1,17 +1,14 @@
-package controller;
+package com.bytegenius.server.controller;
 
-import model.Plan;
+import com.bytegenius.server.model.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.PlanService;
-import serviceImpl.PlanServiceImpl;
+import com.bytegenius.server.service.PlanService;
 
-import java.sql.SQLOutput;
 import java.util.List;
 
 @RestController
@@ -30,6 +27,7 @@ public class PlanController {
     @GetMapping("/ram")
     public ResponseEntity<List<Plan>> getAllRamPlans(){
         List<Plan> plans = planService.getPlanesRam();
+        plans.forEach(plan -> plan.setVideojuego(null));
         return new ResponseEntity<>(plans, HttpStatus.OK);
     }
 

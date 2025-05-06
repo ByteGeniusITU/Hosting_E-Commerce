@@ -1,7 +1,7 @@
-package repository;
+package com.bytegenius.server.repository;
 
-import enums.PlanType;
-import model.Plan;
+import com.bytegenius.server.enums.PlanType;
+import com.bytegenius.server.model.Plan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

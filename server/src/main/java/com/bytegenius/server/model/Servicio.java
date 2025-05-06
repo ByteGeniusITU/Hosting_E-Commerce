@@ -1,7 +1,7 @@
-package model;
+package com.bytegenius.server.model;
 
-import enums.PaymentStatus;
-import enums.ServerStatus;
+import com.bytegenius.server.enums.PaymentStatus;
+import com.bytegenius.server.enums.ServerStatus;
 import jakarta.persistence.*;
 
 @Entity

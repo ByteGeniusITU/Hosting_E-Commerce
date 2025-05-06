@@ -1,10 +1,10 @@
-package serviceImpl;
+package com.bytegenius.server.serviceImpl;
 
-import model.Videojuego;
+import com.bytegenius.server.model.Videojuego;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.VideojuegoRepository;
-import service.VideojuegoService;
+import com.bytegenius.server.repository.VideojuegoRepository;
+import com.bytegenius.server.service.VideojuegoService;
 
 import java.util.List;
 

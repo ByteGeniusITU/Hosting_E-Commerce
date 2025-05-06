@@ -1,6 +1,6 @@
-package repository;
+package com.bytegenius.server.repository;
 
-import model.Servicio;
+import com.bytegenius.server.model.Servicio;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,6 +1,6 @@
-package service;
+package com.bytegenius.server.service;
 
-import model.Videojuego;
+import com.bytegenius.server.model.Videojuego;
 
 import java.util.List;
 

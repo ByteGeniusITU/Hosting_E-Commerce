@@ -1,4 +1,4 @@
-package model;
+package com.bytegenius.server.model;
 
 import jakarta.persistence.*;
 

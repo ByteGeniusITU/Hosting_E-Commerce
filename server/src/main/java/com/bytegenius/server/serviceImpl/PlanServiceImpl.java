@@ -1,11 +1,11 @@
-package serviceImpl;
+package com.bytegenius.server.serviceImpl;
 
-import enums.PlanType;
-import model.Plan;
+import com.bytegenius.server.enums.PlanType;
+import com.bytegenius.server.model.Plan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.PlanRepository;
-import service.PlanService;
+import com.bytegenius.server.repository.PlanRepository;
+import com.bytegenius.server.service.PlanService;
 
 import java.util.List;
 
