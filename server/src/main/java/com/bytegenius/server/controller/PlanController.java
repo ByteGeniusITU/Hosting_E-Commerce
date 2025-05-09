@@ -27,7 +27,6 @@ public class PlanController {
     @GetMapping("/ram")
     public ResponseEntity<List<Plan>> getAllRamPlans(){
         List<Plan> plans = planService.getPlanesRam();
-        plans.forEach(plan -> plan.setVideojuego(null));
         return new ResponseEntity<>(plans, HttpStatus.OK);
     }
 
