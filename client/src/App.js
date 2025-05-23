@@ -1,7 +1,7 @@
 //import logo from './logo.svg';
 //import './App.css';
 import Register from "./Register";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router";
 
 function App() {
   return (
