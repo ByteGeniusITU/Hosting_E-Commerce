@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import Navbar from "./maincomponentes/Navbar";
+import Box from "./maincomponentes/Box";
+import bloqueComando from "./assets/Bloque_de_comandos_condicional_de_impulso.gif";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -30,6 +32,19 @@ const Main = () => {
                     </div>
                 </div>
             </div>
+            <div className="text-center mt-5">
+                <Box className="mb-4">
+                    <h2>MINECRAFT</h2>
+                    <img 
+                        src={bloqueComando}
+                        alt="Bloque de comandos"
+                        style={{ width: "90px", height: "90px", margin: "16px auto", display: "block" }}
+                    />
+                    <p>
+                        El servidor de supervivencia que necesitas para jugar con tus amigos.
+                    </p>
+                </Box>
+            </div>    
         </div>
     );
 }
