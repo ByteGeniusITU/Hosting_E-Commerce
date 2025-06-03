@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "./maincomponentes/Navbar";
 import Box from "./maincomponentes/Box";
 import bloqueComando from "./assets/Bloque_de_comandos_condicional_de_impulso.gif";
+import ReadStone from "./assets/redstone.png";
 
 const Main = () => {
     const navigate = useNavigate();
@@ -44,6 +45,24 @@ const Main = () => {
                         El servidor de supervivencia que necesitas para jugar con tus amigos.
                     </p>
                 </Box>
+            </div>
+            <div style={{ margin: "100px" }}></div>
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-6 text-center">
+                        <img
+                        src={ReadStone}
+                        alt="ReadStone"
+                        style={{ width: "90px", height: "90px", margin: "16px auto", display: "block" }}
+                        />
+                    </div>
+                    <div className="col-md-6">
+                        <h2>Acerca de Nosotros</h2>
+                        <p>
+                            Somos un equipo apasionado por Minecraft, ofreciendo servidores de alta calidad y una experiencia de juego excepcional. Nuestro objetivo es proporcionar un entorno divertido y seguro para todos los jugadores.
+                        </p>
+                    </div>
+                </div>
             </div>    
         </div>
     );
