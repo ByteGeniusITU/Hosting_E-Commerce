@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import Navbar from "./maincomponentes/Navbar";
 import Box from "./maincomponentes/Box";
 import bloqueComando from "./assets/Bloque_de_comandos_condicional_de_impulso.gif";
