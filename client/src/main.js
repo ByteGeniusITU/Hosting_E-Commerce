@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router";
+//import { useNavigate } from "react-router"; Se comenta debido a que no se usa en este archivo y errores en tests del ci
 import Navbar from "./maincomponentes/Navbar";
 import Box from "./maincomponentes/Box";
 import bloqueComando from "./assets/Bloque_de_comandos_condicional_de_impulso.gif";
 import ReadStone from "./assets/redstone.png";
 
 const Main = () => {
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
 
     return (
         <div style={{ minHeight: "100vh", backgroundColor: "#23272b", color: "#fff" }}>
