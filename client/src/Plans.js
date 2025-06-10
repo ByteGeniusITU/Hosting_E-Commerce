@@ -1,271 +1,314 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import './Plans.css';
 
 const Plans = () => {
+    const navigate = useNavigate();
+    const summaryRef = useRef(null);
 
-    // Selección de plan de RAM
-    const ramPlans = document.querySelectorAll('.plan-card');
-    const ramPriceElement = document.getElementById('ram-price');
-    let selectedRamPrice = 16.87; // Precio por defecto (6GB)
+    // Estados para almacenar las selecciones y precios
+    const [selectedRamPlan, setSelectedRamPlan] = useState('');
+    const [selectedRamPrice, setSelectedRamPrice] = useState(0);
+    const [selectedCpuPlan, setSelectedCpuPlan] = useState('');
+    const [selectedCpuPrice, setSelectedCpuPrice] = useState(0);
+    const [totalPrice, setTotalPrice] = useState(0);
+    const [selectedCurrency, setSelectedCurrency] = useState('$');
+    const [selectedBilling, setSelectedBilling] = useState('monthly');
 
-    ramPlans.forEach(plan => {
-        plan.addEventListener('click', function() {
-            // Quitar clase popular de todos los planes
-            ramPlans.forEach(p => {
-                if (p.classList.contains('popular')) {
-                    p.classList.remove('popular');
-                    // Restaurar colores originales
-                    p.querySelector('.ram-size').style.color = 'var(--primary)';
+    // Estados para almacenar las opciones de RAM y CPU desde los endpoints
+    const [ramOptions, setRamOptions] = useState([]);
+    const [cpuOptions, setCpuOptions] = useState([]);
+    const [loadingRam, setLoadingRam] = useState(true);
+    const [loadingCpu, setLoadingCpu] = useState(true);
+
+    // Obtener las opciones de RAM del endpoint
+    useEffect(() => {
+        const fetchRamOptions = async () => {
+            try {
+                setLoadingRam(true);
+                // Remplazar por uri de la API final
+                const response = await fetch('https://api.example.com/ram-options');
+                const data = await response.json();
+
+                if (data && data.resources && Array.isArray(data.resources)) {
+                    const ramValues = data.resources.filter(value => value >= 2);
+                    setRamOptions(ramValues);
+
+                    if (ramValues.length > 0) {
+                        const defaultRamIndex = ramValues.findIndex(val => val >= 6) !== -1
+                            ? ramValues.findIndex(val => val >= 6) 
+                            : Math.floor(ramValues.length / 2);
+                        const defaultRamValue = ramValues[defaultRamIndex];
+                        setSelectedRamPlan(`plan-${defaultRamValue}gb`);
+                        setSelectedRamPrice(calculateRamPrice(defaultRamValue));
+                    }
                 }
-            });
-
-            // Añadir clase popular al plan seleccionado
-            this.classList.add('popular');
-
-            // Cambiar colores del texto
-            this.querySelector('.ram-size').style.color = 'white';
-
-            // Actualizar precio según el plan seleccionado
-            const planId = this.id;
-            switch(planId) {
-                case 'plan-2gb':
-                    selectedRamPrice = 5.99;
-                    ramPriceElement.textContent = '$5.99';
-                    break;
-                case 'plan-4gb':
-                    selectedRamPrice = 11.24;
-                    ramPriceElement.textContent = '$11.24';
-                    break;
-                case 'plan-6gb':
-                    selectedRamPrice = 16.87;
-                    ramPriceElement.textContent = '$16.87';
-                    break;
-                case 'plan-8gb':
-                    selectedRamPrice = 20.99;
-                    ramPriceElement.textContent = '$20.99';
-                    break;
+            } catch (error) {
+                console.error('Error fetching RAM options:', error);
+                // Opciones por si no funciona la API
+                setRamOptions([2, 4, 6, 8]);
+                setSelectedRamPlan('plan-6gb');
+                setSelectedRamPrice(16.87);
+            } finally {
+                setLoadingRam(false);
             }
+        };
 
-            updateTotal();
-        });
-    });
+        fetchRamOptions();
+    }, []);
 
-    // Selección de núcleos CPU
-    const cpuCards = document.querySelectorAll('.cpu-card');
-    const cpuPriceElement = document.getElementById('cpu-price');
-    let selectedCpuPrice = 10.00; // Precio por defecto (2 núcleos)
+    // Obtener las opciones de CPU del endpoint
+    useEffect(() => {
+        const fetchCpuOptions = async () => {
+            try {
+                setLoadingCpu(true);
+                // Remplazar por uri de la API final
+                const response = await fetch('https://api.example.com/cpu-options');
+                const data = await response.json();
 
-    cpuCards.forEach(card => {
-        card.addEventListener('click', function() {
-            // Quitar clase selected de todas las tarjetas
-            cpuCards.forEach(c => c.classList.remove('selected'));
+                if (data && data.resources && Array.isArray(data.resources)) {
+                    const cpuValues = data.resources.filter(value => value >= 1);
+                    setCpuOptions(cpuValues);
 
-            // Añadir clase selected a la tarjeta seleccionada
-            this.classList.add('selected');
-
-            // Actualizar precio según los núcleos seleccionados
-            const cpuId = this.id;
-            switch(cpuId) {
-                case 'cpu-1':
-                    selectedCpuPrice = 5.00;
-                    cpuPriceElement.textContent = '$5.00';
-                    break;
-                case 'cpu-2':
-                    selectedCpuPrice = 10.00;
-                    cpuPriceElement.textContent = '$10.00';
-                    break;
-                case 'cpu-4':
-                    selectedCpuPrice = 18.00;
-                    cpuPriceElement.textContent = '$18.00';
-                    break;
-                case 'cpu-8':
-                    selectedCpuPrice = 32.00;
-                    cpuPriceElement.textContent = '$32.00';
-                    break;
+                    if (cpuValues.length > 0) {
+                        const defaultCpuIndex = cpuValues.findIndex(val => val >= 2) !== -1
+                            ? cpuValues.findIndex(val => val >= 2) 
+                            : Math.floor(cpuValues.length / 2);
+                        const defaultCpuValue = cpuValues[defaultCpuIndex];
+                        setSelectedCpuPlan(`cpu-${defaultCpuValue}`);
+                        setSelectedCpuPrice(calculateCpuPrice(defaultCpuValue));
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching CPU options:', error);
+                // Opciones por si no funciona la API
+                setCpuOptions([1, 2, 4, 8]);
+                setSelectedCpuPlan('cpu-2');
+                setSelectedCpuPrice(10.00);
+            } finally {
+                setLoadingCpu(false);
             }
+        };
 
-            updateTotal();
-        });
-    });
+        fetchCpuOptions();
+    }, []);
 
-    // Actualizar precio total
-    function updateTotal() {
-        const totalPrice = selectedRamPrice + selectedCpuPrice;
-        document.getElementById('total-price').textContent = '$' + totalPrice.toFixed(2);
-    }
+    // Ayuda para calcular precio por RAM
+    const calculateRamPrice = (gb) => {
+        switch(gb) {
+            case 2: return 5.99;
+            case 4: return 11.24;
+            case 6: return 16.87;
+            case 8: return 20.99;
+            default: return gb * 2.5;
+        }
+    };
 
-    // Selección de moneda
-    const currencyButtons = document.querySelectorAll('.currency-btn');
+    // Ayuda para calcular precio por CPU
+    const calculateCpuPrice = (cores) => {
+        switch(cores) {
+            case 1: return 5.00;
+            case 2: return 10.00;
+            case 4: return 18.00;
+            case 8: return 32.00;
+            default: return cores * 4.5;
+        }
+    };
 
-    currencyButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            currencyButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
+    // Actualizar precio total cuando cambian los precios de RAM o CPU
+    useEffect(() => {
+        setTotalPrice(selectedRamPrice + selectedCpuPrice);
+    }, [selectedRamPrice, selectedCpuPrice]);
 
-    // Selección de facturación
-    const billingOptions = document.querySelectorAll('.billing-option');
+    // Manejador para selección de plan RAM
+    const handleRamPlanSelect = (planId) => {
+        setSelectedRamPlan(planId);
 
-    billingOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            billingOptions.forEach(opt => opt.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
+        // Obtiene la opcion de RAM seleccionada
+        const gbValue = parseInt(planId.replace('plan-', '').replace('gb', ''), 10);
+
+        // Calcula y muestra el precio basado en la RAM
+        const price = calculateRamPrice(gbValue);
+        setSelectedRamPrice(price);
+    };
+
+    // Manejador para selección de núcleos CPU
+    const handleCpuSelect = (cpuId) => {
+        setSelectedCpuPlan(cpuId);
+
+        // Obtiene la opcion de CPU seleccionada
+        const coresValue = parseInt(cpuId.replace('cpu-', ''), 10);
+
+        // Calcula y muestra el precio basado en la CPU
+        const price = calculateCpuPrice(coresValue);
+        setSelectedCpuPrice(price);
+    };
+
+    // Función para desplazarse a la sección de resumen
+    const scrollToSummary = () => {
+        summaryRef.current.scrollIntoView({ behavior: 'smooth' });
+    };
 
     return (
-        <div class="container py-5">
-            <div class="plan-header">
-                <h1 class="mb-3">SELECT PLAN</h1>
-                <p class="text-muted">Not sure what plan to choose? Check out our <a href="#" class="guide-link">RAM calculator guide</a>.</p>
-
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <div class="currency-selector">
-                        <button class="currency-btn active">$</button>
-                        <button class="currency-btn">€</button>
-                        <button class="currency-btn">£</button>
-                        <button class="currency-btn">A$</button>
-                        <button class="currency-btn">C$</button>
-                    </div>
-
-                    <div class="billing-options">
-                        <div class="billing-option active">Facturado Mensualmente</div>
-                        <div class="billing-option">Facturado Trimestralmente (10% de Descuento)</div>
-                    </div>
-                </div>
+        <div className="container py-5">
+            <div className="plan-header">
+                <h1 className="mb-3">PLANES DISPONIBLES</h1>
             </div>
 
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="plan-card" id="plan-2gb">
-                        <h2 class="ram-size">2</h2>
-                        <div class="ram-label">GB RAM</div>
-                        <div class="plan-description">
-                            Servidores básicos & algunos modpacks. Mínimo para Minecraft: Java Edition
-                        </div>
-                        <div class="price-first">$5.99 primer mes</div>
-                        <div class="price-recurring">Precio Recurrente $7.99</div>
-                        <button class="btn btn-success btn-buy">Comprar Ahora</button>
+            {loadingRam ? (
+                <div className="text-center my-5">
+                    <div className="spinner-border text-primary" role="status">
+                        <span className="visually-hidden">Loading...</span>
                     </div>
+                    <p className="mt-2">Cargando opciones de RAM...</p>
                 </div>
+            ) : (
+                <div className="row g-4">
+                    {ramOptions.map((ramValue) => {
+                        const planId = `plan-${ramValue}gb`;
+                        const isSelected = selectedRamPlan === planId;
+                        const price = calculateRamPrice(ramValue);
+                        const recurringPrice = (price * 1.33).toFixed(2);
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="plan-card" id="plan-4gb">
-                        <h2 class="ram-size">4</h2>
-                        <div class="ram-label">GB RAM</div>
-                        <div class="plan-description">
-                            Servidores básicos & muchos modpacks
-                        </div>
-                        <div class="price-first">$11.24 primer mes</div>
-                        <div class="price-recurring">Precio Recurrente $14.99</div>
-                        <button class="btn btn-success btn-buy">Comprar Ahora</button>
-                    </div>
-                </div>
+                        // Determina la descripcion basado en el tamño de RAM
+                        let description = "";
+                        if (ramValue <= 2) {
+                            description = "Servidores básicos & algunos modpacks. Mínimo para Minecraft: Java Edition";
+                        } else if (ramValue <= 4) {
+                            description = "Servidores básicos & muchos modpacks";
+                        } else if (ramValue <= 6) {
+                            description = "Servidores básicos & muchos modpacks";
+                        } else {
+                            description = "Servidores avanzados & todos los modpacks";
+                        }
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="plan-card popular" id="plan-6gb">
-                        <span class="popular-badge">popular</span>
-                        <h2 class="ram-size">6</h2>
-                        <div class="ram-label">GB RAM</div>
-                        <div class="plan-description">
-                            Servidores básicos & muchos modpacks
-                        </div>
-                        <div class="price-first">$16.87 primer mes</div>
-                        <div class="price-recurring">Precio Recurrente $22.49</div>
-                        <button class="btn btn-success btn-buy">Comprar Ahora</button>
-                    </div>
+                        return (
+                            <div className="col-md-6 col-lg-3" key={planId}>
+                                <div 
+                                    className={`plan-card ${isSelected ? 'popular' : ''}`} 
+                                    id={planId}
+                                    onClick={() => handleRamPlanSelect(planId)}
+                                >
+                                    {isSelected && ramValue >= 6 && <span className="popular-badge">popular</span>}
+                                    <h2 className="ram-size" style={{color: isSelected ? 'white' : 'var(--primary)'}}>
+                                        {ramValue}
+                                    </h2>
+                                    <div className="ram-label">GB RAM</div>
+                                    <div className="plan-description">
+                                        {description}
+                                    </div>
+                                    <div className="price-first">${price.toFixed(2)} primer mes</div>
+                                    <div className="price-recurring">Precio Recurrente ${recurringPrice}</div>
+                                    <button 
+                                        className="btn btn-success btn-buy"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRamPlanSelect(planId);
+                                            scrollToSummary();
+                                        }}
+                                    >Comprar Ahora</button>
+                                </div>
+                            </div>
+                        );
+                    })}
                 </div>
+            )}
 
-                <div class="col-md-6 col-lg-3">
-                    <div class="plan-card" id="plan-8gb">
-                        <h2 class="ram-size">8</h2>
-                        <div class="ram-label">GB RAM</div>
-                        <div class="plan-description">
-                            Servidores avanzados & todos los modpacks
+            <div className="cpu-selector">
+                <h2 className="section-title">SELECCIONA NÚCLEOS CPU</h2>
+                {loadingCpu ? (
+                    <div className="text-center my-5">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
                         </div>
-                        <div class="price-first">$20.99 primer mes</div>
-                        <div class="price-recurring">Precio Recurrente $27.99</div>
-                        <button class="btn btn-success btn-buy">Comprar Ahora</button>
+                        <p className="mt-2">Cargando opciones de CPU...</p>
                     </div>
-                </div>
+                ) : (
+                    <div className="row g-4">
+                        {cpuOptions.map((cpuValue) => {
+                            const cpuId = `cpu-${cpuValue}`;
+                            const isSelected = selectedCpuPlan === cpuId;
+                            const price = calculateCpuPrice(cpuValue);
+
+                            // Determina la descripcion dependiendo de la cantidad de nucleos
+                            let description = "";
+                            if (cpuValue === 1) {
+                                description = "Ideal para servidores pequeños con pocos jugadores";
+                            } else if (cpuValue === 2) {
+                                description = "Recomendado para la mayoría de servidores";
+                            } else if (cpuValue === 4) {
+                                description = "Para servidores con muchos jugadores y plugins";
+                            } else if (cpuValue >= 8) {
+                                description = "Rendimiento máximo para servidores grandes";
+                            } else {
+                                description = "Buen rendimiento para servidores medianos";
+                            }
+
+                            return (
+                                <div className="col-md-6 col-lg-3" key={cpuId}>
+                                    <div 
+                                        className={`cpu-card ${isSelected ? 'selected' : ''}`} 
+                                        id={cpuId}
+                                        onClick={() => handleCpuSelect(cpuId)}
+                                    >
+                                        <div className="cpu-size">{cpuValue}</div>
+                                        <div className="cpu-label">{cpuValue === 1 ? 'Núcleo CPU' : 'Núcleos CPU'}</div>
+                                        <div className="cpu-description mb-3">
+                                            {description}
+                                        </div>
+                                        <div className="cpu-price">${price.toFixed(2)} / mes</div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
+                )}
             </div>
 
-            <div class="show-more">
-                <button class="btn btn-primary">Show More</button>
-            </div>
+            <div className="summary-section" ref={summaryRef}>
+                <h3 className="summary-title">Resumen de tu plan</h3>
 
-            <div class="cpu-selector">
-                <h2 class="section-title">SELECCIONA NÚCLEOS CPU</h2>
-                <div class="row g-4">
-                    <div class="col-md-6 col-lg-3">
-                        <div class="cpu-card" id="cpu-1">
-                            <div class="cpu-size">1</div>
-                            <div class="cpu-label">Núcleo CPU</div>
-                            <div class="cpu-description mb-3">
-                                Ideal para servidores pequeños con pocos jugadores
-                            </div>
-                            <div class="cpu-price">$5.00 / mes</div>
+                {loadingRam || loadingCpu ? (
+                    <div className="text-center my-4">
+                        <div className="spinner-border text-primary" role="status">
+                            <span className="visually-hidden">Loading...</span>
                         </div>
+                        <p className="mt-2">Calculando precios...</p>
                     </div>
-
-                    <div class="col-md-6 col-lg-3">
-                        <div class="cpu-card selected" id="cpu-2">
-                            <div class="cpu-size">2</div>
-                            <div class="cpu-label">Núcleos CPU</div>
-                            <div class="cpu-description mb-3">
-                                Recomendado para la mayoría de servidores
-                            </div>
-                            <div class="cpu-price">$10.00 / mes</div>
+                ) : (
+                    <>
+                        <div className="summary-item">
+                            <span>Memoria RAM ({selectedRamPlan ? selectedRamPlan.replace('plan-', '').replace('gb', '') : '0'} GB)</span>
+                            <span>${selectedRamPrice.toFixed(2)}</span>
                         </div>
-                    </div>
 
-                    <div class="col-md-6 col-lg-3">
-                        <div class="cpu-card" id="cpu-4">
-                            <div class="cpu-size">4</div>
-                            <div class="cpu-label">Núcleos CPU</div>
-                            <div class="cpu-description mb-3">
-                                Para servidores con muchos jugadores y plugins
-                            </div>
-                            <div class="cpu-price">$18.00 / mes</div>
+                        <div className="summary-item">
+                            <span>Núcleos CPU ({selectedCpuPlan ? selectedCpuPlan.replace('cpu-', '') : '0'})</span>
+                            <span>${selectedCpuPrice.toFixed(2)}</span>
                         </div>
-                    </div>
 
-                    <div class="col-md-6 col-lg-3">
-                        <div class="cpu-card" id="cpu-8">
-                            <div class="cpu-size">8</div>
-                            <div class="cpu-label">Núcleos CPU</div>
-                            <div class="cpu-description mb-3">
-                                Rendimiento máximo para servidores grandes
-                            </div>
-                            <div class="cpu-price">$32.00 / mes</div>
+                        <div className="summary-total">
+                            <span>Total Mensual:</span>
+                            <span>${totalPrice.toFixed(2)}</span>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="summary-section">
-                <h3 class="summary-title">Resumen de tu plan</h3>
-
-                <div class="summary-item">
-                    <span>Memoria RAM (6 GB)</span>
-                    <span id="ram-price">$16.87</span>
-                </div>
-
-                <div class="summary-item">
-                    <span>Núcleos CPU (2)</span>
-                    <span id="cpu-price">$10.00</span>
-                </div>
-
-                <div class="summary-total">
-                    <span>Total Mensual:</span>
-                    <span id="total-price">$26.87</span>
-                </div>
-
-                <button class="btn btn-success btn-buy">Contratar Ahora</button>
+                        <button 
+                            className="btn btn-success btn-buy"
+                            disabled={!selectedRamPlan || !selectedCpuPlan}
+                            onClick={() => navigate('/checkout', { 
+                                state: { 
+                                    ramPlan: selectedRamPlan, 
+                                    cpuPlan: selectedCpuPlan, 
+                                    totalPrice: totalPrice,
+                                    currency: selectedCurrency,
+                                    billing: selectedBilling
+                                } 
+                            })}
+                        >Contratar Ahora</button>
+                    </>
+                )}
             </div>
         </div>
     );
