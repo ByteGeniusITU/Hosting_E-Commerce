@@ -2,9 +2,7 @@ name: React CD
 
 on:
   push:
-    branches: [staging, production]
-  pull_request:
-    branches: [main]
+    branches: [production]
 
 jobs:
   deploy:
